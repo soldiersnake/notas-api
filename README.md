@@ -1,21 +1,36 @@
 # notas-api
 
-API REST para crear, consultar, actualizar y eliminar notas. Está desarrollada con Express y TypeScript; los datos se guardan en memoria y se pierden al reiniciar el servidor.
+API REST para crear, consultar, actualizar y eliminar notas. Está desarrollada con Express, TypeScript y Mongoose; los datos persisten en MongoDB. Si MongoDB no está disponible al iniciar, la API aborta el arranque (`exit 1`).
 
 ## Requisitos
 
 - Node.js y npm instalados.
+- Docker y Docker Compose instalados (para ejecutar MongoDB localmente en el puerto `27019`).
 
 ## Instalación y ejecución
 
 Desde la raíz del proyecto:
+
+1. Crear el archivo `.env` a partir de la plantilla:
+
+```bash
+cp .env.example .env
+```
+
+2. Levantar la base de datos MongoDB en segundo plano:
+
+```bash
+docker compose up -d
+```
+
+3. Instalar las dependencias y arrancar el servidor de desarrollo:
 
 ```bash
 npm install
 npm run dev
 ```
 
-La API escucha en `http://localhost:3001` de forma predeterminada. Se puede cambiar el puerto con la variable de entorno `PORT`.
+La API escucha en `http://localhost:3001` de forma predeterminada. Es indispensable que MongoDB esté en ejecución antes de iniciar el servidor; de lo contrario, el proceso abortará al arrancar.
 
 Para compilar y ejecutar la versión compilada:
 
@@ -24,11 +39,18 @@ npm run build
 npm run start
 ```
 
+## Variables de entorno
+
+Los scripts `npm run dev` y `npm run start` cargan automáticamente el archivo `.env` si existe (`--env-file-if-exists=.env`):
+
+- `PORT`: puerto HTTP del servidor (valor por defecto: `3001`).
+- `MONGODB_URI`: URI de conexión a MongoDB (valor por defecto: `mongodb://localhost:27019/notas-api`).
+
 ## Scripts
 
-- `npm run dev`: inicia el servidor de desarrollo con recarga automática.
+- `npm run dev`: inicia el servidor de desarrollo con recarga automática (carga `.env` si existe).
 - `npm run build`: compila TypeScript en `dist/`.
-- `npm run start`: inicia el servidor compilado (`npm start` también funciona).
+- `npm run start`: inicia el servidor compilado desde `dist/index.js` (carga `.env` si existe; `npm start` también funciona).
 
 ## Modelo `Nota`
 
